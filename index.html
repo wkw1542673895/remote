@@ -18,6 +18,8 @@ async function load() {
     document.getElementById('dashboard').textContent = d.dashboard;
     document.getElementById('terminal').href = d.terminal;
     document.getElementById('terminal').textContent = d.terminal;
+    document.getElementById('desktop').href = d.desktop;
+    document.getElementById('desktop').textContent = d.desktop;
     document.getElementById('time').textContent = d.updated;
   } catch(e) {
     document.getElementById('status').textContent = 'URL not available';
@@ -28,10 +30,11 @@ window.onload = load;
 </head>
 <body>
 <h2>Remote Access</h2>
-<p id="status">
+<div id="status">
   <strong>Dashboard:</strong> <a id="dashboard" href="#">loading...</a>
   <strong>Terminal:</strong> <a id="terminal" href="#">loading...</a>
-</p>
+  <strong>Desktop:</strong> <a id="desktop" href="#">loading...</a>
+</div>
 <p class="time">Updated: <span id="time">-</span></p>
 </body>
 </html>
