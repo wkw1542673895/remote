@@ -2,10 +2,11 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Remote Access</title>
 <style>
-  body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 80px auto; padding: 0 20px; color: #333; }
-  a { color: #0066cc; text-decoration: none; font-size: 18px; display: block; margin: 12px 0; }
+  body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; color: #333; }
+  a { color: #0066cc; text-decoration: none; font-size: 18px; display: block; margin: 12px 0; word-break: break-all; }
   a:hover { text-decoration: underline; }
   .time { color: #999; font-size: 14px; }
 </style>
@@ -14,13 +15,12 @@ async function load() {
   try {
     const r = await fetch('url.json?' + Date.now());
     const d = await r.json();
-    document.getElementById('dashboard').href = d.dashboard;
-    document.getElementById('dashboard').textContent = d.dashboard;
-    document.getElementById('terminal').href = d.terminal;
-    document.getElementById('terminal').textContent = d.terminal;
-    document.getElementById('desktop').href = d.desktop;
-    document.getElementById('desktop').textContent = d.desktop;
-    document.getElementById('time').textContent = d.updated;
+    const set = (id, url) => { const el = document.getElementById(id); if (el && url) { el.href = url; el.textContent = url; } };
+    set('dashboard', d.dashboard);
+    set('terminal', d.terminal);
+    set('mobile', d.mobile || (d.dashboard ? d.dashboard + '/mobile' : ''));
+    set('desktop', d.desktop);
+    document.getElementById('time').textContent = d.updated || '-';
   } catch(e) {
     document.getElementById('status').textContent = 'URL not available';
   }
@@ -33,6 +33,7 @@ window.onload = load;
 <div id="status">
   <strong>Dashboard:</strong> <a id="dashboard" href="#">loading...</a>
   <strong>Terminal:</strong> <a id="terminal" href="#">loading...</a>
+  <strong>Mobile:</strong> <a id="mobile" href="#">loading...</a>
   <strong>Desktop:</strong> <a id="desktop" href="#">loading...</a>
 </div>
 <p class="time">Updated: <span id="time">-</span></p>
