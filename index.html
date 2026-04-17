@@ -9,6 +9,8 @@
   a { color: #0066cc; text-decoration: none; font-size: 18px; display: block; margin: 12px 0; word-break: break-all; }
   a:hover { text-decoration: underline; }
   .time { color: #999; font-size: 14px; }
+  .label { font-size: 14px; color: #666; margin-top: 20px; margin-bottom: 4px; }
+  hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
 </style>
 <script>
 async function load() {
@@ -19,6 +21,7 @@ async function load() {
     set('dashboard', d.dashboard);
     set('terminal', d.terminal);
     set('mobile', d.mobile || (d.dashboard ? d.dashboard + '/mobile' : ''));
+    set('mobile_dashboard', d.mobile_dashboard || (d.dashboard ? d.dashboard + '/dashboard/mobile' : ''));
     set('desktop', d.desktop);
     document.getElementById('time').textContent = d.updated || '-';
   } catch(e) {
@@ -31,10 +34,14 @@ window.onload = load;
 <body>
 <h2>Remote Access</h2>
 <div id="status">
+  <p class="label">Web</p>
   <strong>Dashboard:</strong> <a id="dashboard" href="#">loading...</a>
   <strong>Terminal:</strong> <a id="terminal" href="#">loading...</a>
-  <strong>Mobile:</strong> <a id="mobile" href="#">loading...</a>
   <strong>Desktop:</strong> <a id="desktop" href="#">loading...</a>
+  <hr>
+  <p class="label">Mobile</p>
+  <strong>Dashboard:</strong> <a id="mobile_dashboard" href="#">loading...</a>
+  <strong>Terminal:</strong> <a id="mobile" href="#">loading...</a>
 </div>
 <p class="time">Updated: <span id="time">-</span></p>
 </body>
