@@ -8,16 +8,17 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body { font-family: -apple-system, sans-serif; color: #333; background: #f0f2f5; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-  .container { width: 100%; max-width: 500px; }
+  .container { width: 100%; max-width: 600px; }
   h2 { text-align: center; margin-bottom: 24px; font-size: 22px; }
   .section { background: #fff; border-radius: 14px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
   .label { font-size: 13px; color: #888; margin-bottom: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-  .link-row { display: flex; gap: 10px; margin-bottom: 10px; }
-  .link-row:last-child { margin-bottom: 0; }
-  a.btn { display: flex; align-items: center; justify-content: center; flex: 1; text-align: center; padding: 14px 8px; background: #0066cc; color: #fff; text-decoration: none; border-radius: 10px; font-size: 16px; font-weight: 500; transition: background 0.15s; }
-  a.btn:active { background: #0052a3; }
-  a.btn.cf { background: #e0e0e0; color: #555; font-size: 13px; padding: 14px 8px; flex: 0 0 70px; }
-  a.btn.cf:active { background: #ccc; }
+  .item { margin-bottom: 12px; }
+  .item:last-child { margin-bottom: 0; }
+  .item strong { font-size: 14px; color: #555; display: block; margin-bottom: 4px; }
+  a { color: #0066cc; text-decoration: none; font-size: 15px; word-break: break-all; display: block; padding: 8px 12px; background: #f8f9fa; border-radius: 8px; }
+  a:hover { background: #e8f0fe; }
+  a.cf { font-size: 13px; color: #888; background: none; padding: 4px 12px; margin-top: 2px; }
+  a.cf:hover { color: #0066cc; }
   .time { color: #aaa; font-size: 12px; text-align: center; margin-top: 12px; }
 </style>
 <script>
@@ -25,23 +26,27 @@ async function load() {
   try {
     const r = await fetch('url.json?' + Date.now());
     const d = await r.json();
+    const set = (id, url) => { const el = document.getElementById(id); if (el && url) { el.href = url; el.textContent = url; } };
     const base = d.dashboard || '';
     const cf = d.cloudflare || '';
-    const links = {
-      dashboard: [base, cf],
-      dashboard2: [base + '/dashboard2', cf ? cf + '/dashboard2' : ''],
-      terminal: [base + '/terminal/', cf ? cf + '/terminal' : ''],
-      desktop: [base + '/desktop', cf ? cf + '/desktop' : ''],
-      files: [base + '/files', cf ? cf + '/files' : ''],
-      mobile_dashboard: [base + '/dashboard/mobile', cf ? cf + '/dashboard/mobile' : ''],
-      mobile: [base + '/mobile', cf ? cf + '/mobile' : ''],
-      mobile_files: [base + '/files', cf ? cf + '/files' : ''],
-    };
-    for (const [id, [url, cfUrl]] of Object.entries(links)) {
-      const el = document.getElementById(id);
-      if (el && url) el.href = url;
-      const cel = document.getElementById('cf_' + id);
-      if (cel && cfUrl) { cel.href = cfUrl; cel.style.display = 'flex'; }
+    set('dashboard', base);
+    set('dashboard2', base + '/dashboard2');
+    set('terminal', base + '/terminal/');
+    set('desktop', base + '/desktop');
+    set('files', base + '/files');
+    set('mobile_dashboard', base + '/dashboard/mobile');
+    set('mobile', base + '/mobile');
+    set('mobile_files', base + '/files');
+    if (cf) {
+      document.querySelectorAll('.cf').forEach(el => el.style.display = 'block');
+      set('cf_dashboard', cf);
+      set('cf_dashboard2', cf + '/dashboard2');
+      set('cf_terminal', cf + '/terminal');
+      set('cf_desktop', cf + '/desktop');
+      set('cf_files', cf + '/files');
+      set('cf_mobile_dashboard', cf + '/dashboard/mobile');
+      set('cf_mobile', cf + '/mobile');
+      set('cf_mobile_files', cf + '/files');
     }
     document.getElementById('time').textContent = d.updated || '-';
   } catch(e) {
@@ -57,42 +62,18 @@ window.onload = load;
 
 <div class="section">
   <p class="label">Web</p>
-  <div class="link-row">
-    <a id="dashboard" class="btn" href="#">Dashboard</a>
-    <a id="cf_dashboard" class="btn cf" href="#" style="display:none">备用</a>
-  </div>
-  <div class="link-row">
-    <a id="dashboard2" class="btn" href="#">Dashboard2</a>
-    <a id="cf_dashboard2" class="btn cf" href="#" style="display:none">备用</a>
-  </div>
-  <div class="link-row">
-    <a id="terminal" class="btn" href="#">Terminal</a>
-    <a id="cf_terminal" class="btn cf" href="#" style="display:none">备用</a>
-  </div>
-  <div class="link-row">
-    <a id="desktop" class="btn" href="#">Desktop</a>
-    <a id="cf_desktop" class="btn cf" href="#" style="display:none">备用</a>
-  </div>
-  <div class="link-row">
-    <a id="files" class="btn" href="#">Files</a>
-    <a id="cf_files" class="btn cf" href="#" style="display:none">备用</a>
-  </div>
+  <div class="item"><strong>Dashboard</strong><a id="dashboard" href="#">loading...</a><a id="cf_dashboard" class="cf" href="#" style="display:none">-</a></div>
+  <div class="item"><strong>Dashboard2</strong><a id="dashboard2" href="#">loading...</a><a id="cf_dashboard2" class="cf" href="#" style="display:none">-</a></div>
+  <div class="item"><strong>Terminal</strong><a id="terminal" href="#">loading...</a><a id="cf_terminal" class="cf" href="#" style="display:none">-</a></div>
+  <div class="item"><strong>Desktop</strong><a id="desktop" href="#">loading...</a><a id="cf_desktop" class="cf" href="#" style="display:none">-</a></div>
+  <div class="item"><strong>Files</strong><a id="files" href="#">loading...</a><a id="cf_files" class="cf" href="#" style="display:none">-</a></div>
 </div>
 
 <div class="section">
   <p class="label">Mobile</p>
-  <div class="link-row">
-    <a id="mobile_dashboard" class="btn" href="#">Dashboard</a>
-    <a id="cf_mobile_dashboard" class="btn cf" href="#" style="display:none">备用</a>
-  </div>
-  <div class="link-row">
-    <a id="mobile" class="btn" href="#">Terminal</a>
-    <a id="cf_mobile" class="btn cf" href="#" style="display:none">备用</a>
-  </div>
-  <div class="link-row">
-    <a id="mobile_files" class="btn" href="#">Files</a>
-    <a id="cf_mobile_files" class="btn cf" href="#" style="display:none">备用</a>
-  </div>
+  <div class="item"><strong>Dashboard</strong><a id="mobile_dashboard" href="#">loading...</a><a id="cf_mobile_dashboard" class="cf" href="#" style="display:none">-</a></div>
+  <div class="item"><strong>Terminal</strong><a id="mobile" href="#">loading...</a><a id="cf_mobile" class="cf" href="#" style="display:none">-</a></div>
+  <div class="item"><strong>Files</strong><a id="mobile_files" href="#">loading...</a><a id="cf_mobile_files" class="cf" href="#" style="display:none">-</a></div>
 </div>
 
 <p class="time">Updated: <span id="time">-</span></p>
