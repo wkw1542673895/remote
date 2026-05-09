@@ -11,6 +11,8 @@
   .time { color: #999; font-size: 14px; }
   .label { font-size: 14px; color: #666; margin-top: 20px; margin-bottom: 4px; }
   hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+  .cf-section { display: none; }
+  .cf-note { font-size: 12px; color: #999; margin-top: 2px; }
 </style>
 <script>
 async function load() {
@@ -25,6 +27,12 @@ async function load() {
     set('desktop', d.desktop);
     set('files', d.files || (d.dashboard ? d.dashboard + '/files' : ''));
     set('dashboard2', d.dashboard2 || (d.dashboard ? d.dashboard + '/dashboard2' : ''));
+    if (d.cloudflare) {
+      document.getElementById('cf-section').style.display = 'block';
+      set('cf_dashboard', d.cloudflare);
+      set('cf_terminal', d.cf_terminal || d.cloudflare + '/terminal');
+      set('cf_mobile', d.cf_mobile || d.cloudflare + '/mobile');
+    }
     document.getElementById('time').textContent = d.updated || '-';
   } catch(e) {
     document.getElementById('status').textContent = 'URL not available';
@@ -46,6 +54,13 @@ window.onload = load;
   <p class="label">Mobile</p>
   <strong>Dashboard:</strong> <a id="mobile_dashboard" href="#">loading...</a>
   <strong>Terminal:</strong> <a id="mobile" href="#">loading...</a>
+  <hr>
+  <div id="cf-section" class="cf-section">
+    <p class="label">Cloudflare 备用通道 <span class="cf-note">（公司网络用这组链接）</span></p>
+    <strong>Dashboard:</strong> <a id="cf_dashboard" href="#">-</a>
+    <strong>Terminal:</strong> <a id="cf_terminal" href="#">-</a>
+    <strong>Mobile:</strong> <a id="cf_mobile" href="#">-</a>
+  </div>
 </div>
 <p class="time">Updated: <span id="time">-</span></p>
 </body>
