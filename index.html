@@ -8,11 +8,11 @@
   body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; color: #333; }
   a { color: #0066cc; text-decoration: none; font-size: 18px; display: block; margin: 12px 0; word-break: break-all; }
   a:hover { text-decoration: underline; }
+  a.cf { font-size: 14px; color: #888; margin: -6px 0 12px 0; }
+  a.cf:hover { color: #0066cc; }
   .time { color: #999; font-size: 14px; }
   .label { font-size: 14px; color: #666; margin-top: 20px; margin-bottom: 4px; }
   hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
-  .cf-section { display: none; }
-  .cf-note { font-size: 12px; color: #999; margin-top: 2px; }
 </style>
 <script>
 async function load() {
@@ -20,18 +20,24 @@ async function load() {
     const r = await fetch('url.json?' + Date.now());
     const d = await r.json();
     const set = (id, url) => { const el = document.getElementById(id); if (el && url) { el.href = url; el.textContent = url; } };
-    set('dashboard', d.dashboard);
-    set('terminal', d.terminal);
-    set('mobile', d.mobile || (d.dashboard ? d.dashboard + '/mobile' : ''));
-    set('mobile_dashboard', d.mobile_dashboard || (d.dashboard ? d.dashboard + '/dashboard/mobile' : ''));
-    set('desktop', d.desktop);
-    set('files', d.files || (d.dashboard ? d.dashboard + '/files' : ''));
-    set('dashboard2', d.dashboard2 || (d.dashboard ? d.dashboard + '/dashboard2' : ''));
-    if (d.cloudflare) {
-      document.getElementById('cf-section').style.display = 'block';
-      set('cf_dashboard', d.cloudflare);
-      set('cf_terminal', d.cf_terminal || d.cloudflare + '/terminal');
-      set('cf_mobile', d.cf_mobile || d.cloudflare + '/mobile');
+    const base = d.dashboard || '';
+    const cf = d.cloudflare || '';
+    set('dashboard', base);
+    set('dashboard2', d.dashboard2 || base + '/dashboard2');
+    set('terminal', d.terminal || base + '/terminal/');
+    set('desktop', d.desktop || base + '/desktop');
+    set('files', d.files || base + '/files');
+    set('mobile_dashboard', d.mobile_dashboard || base + '/dashboard/mobile');
+    set('mobile', d.mobile || base + '/mobile');
+    if (cf) {
+      document.querySelectorAll('.cf').forEach(el => el.style.display = 'block');
+      set('cf_dashboard', cf);
+      set('cf_dashboard2', cf + '/dashboard2');
+      set('cf_terminal', cf + '/terminal');
+      set('cf_desktop', cf + '/desktop');
+      set('cf_files', cf + '/files');
+      set('cf_mobile_dashboard', cf + '/dashboard/mobile');
+      set('cf_mobile', cf + '/mobile');
     }
     document.getElementById('time').textContent = d.updated || '-';
   } catch(e) {
@@ -45,22 +51,15 @@ window.onload = load;
 <h2>Remote Access</h2>
 <div id="status">
   <p class="label">Web</p>
-  <strong>Dashboard:</strong> <a id="dashboard" href="#">loading...</a>
-  <strong>Dashboard2:</strong> <a id="dashboard2" href="#">loading...</a>
-  <strong>Terminal:</strong> <a id="terminal" href="#">loading...</a>
-  <strong>Desktop:</strong> <a id="desktop" href="#">loading...</a>
-  <strong>Files:</strong> <a id="files" href="#">loading...</a>
+  <strong>Dashboard:</strong> <a id="dashboard" href="#">loading...</a><a id="cf_dashboard" class="cf" href="#" style="display:none">-</a>
+  <strong>Dashboard2:</strong> <a id="dashboard2" href="#">loading...</a><a id="cf_dashboard2" class="cf" href="#" style="display:none">-</a>
+  <strong>Terminal:</strong> <a id="terminal" href="#">loading...</a><a id="cf_terminal" class="cf" href="#" style="display:none">-</a>
+  <strong>Desktop:</strong> <a id="desktop" href="#">loading...</a><a id="cf_desktop" class="cf" href="#" style="display:none">-</a>
+  <strong>Files:</strong> <a id="files" href="#">loading...</a><a id="cf_files" class="cf" href="#" style="display:none">-</a>
   <hr>
   <p class="label">Mobile</p>
-  <strong>Dashboard:</strong> <a id="mobile_dashboard" href="#">loading...</a>
-  <strong>Terminal:</strong> <a id="mobile" href="#">loading...</a>
-  <hr>
-  <div id="cf-section" class="cf-section">
-    <p class="label">Cloudflare 备用通道 <span class="cf-note">（公司网络用这组链接）</span></p>
-    <strong>Dashboard:</strong> <a id="cf_dashboard" href="#">-</a>
-    <strong>Terminal:</strong> <a id="cf_terminal" href="#">-</a>
-    <strong>Mobile:</strong> <a id="cf_mobile" href="#">-</a>
-  </div>
+  <strong>Dashboard:</strong> <a id="mobile_dashboard" href="#">loading...</a><a id="cf_mobile_dashboard" class="cf" href="#" style="display:none">-</a>
+  <strong>Terminal:</strong> <a id="mobile" href="#">loading...</a><a id="cf_mobile" class="cf" href="#" style="display:none">-</a>
 </div>
 <p class="time">Updated: <span id="time">-</span></p>
 </body>
