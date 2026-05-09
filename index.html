@@ -29,6 +29,7 @@ async function load() {
     set('files', d.files || base + '/files');
     set('mobile_dashboard', d.mobile_dashboard || base + '/dashboard/mobile');
     set('mobile', d.mobile || base + '/mobile');
+    set('mobile_files', d.files || base + '/files');
     if (cf) {
       document.querySelectorAll('.cf').forEach(el => el.style.display = 'block');
       set('cf_dashboard', cf);
@@ -38,6 +39,7 @@ async function load() {
       set('cf_files', cf + '/files');
       set('cf_mobile_dashboard', cf + '/dashboard/mobile');
       set('cf_mobile', cf + '/mobile');
+      set('cf_mobile_files', cf + '/files');
     }
     document.getElementById('time').textContent = d.updated || '-';
   } catch(e) {
@@ -60,6 +62,7 @@ window.onload = load;
   <p class="label">Mobile</p>
   <strong>Dashboard:</strong> <a id="mobile_dashboard" href="#">loading...</a><a id="cf_mobile_dashboard" class="cf" href="#" style="display:none">-</a>
   <strong>Terminal:</strong> <a id="mobile" href="#">loading...</a><a id="cf_mobile" class="cf" href="#" style="display:none">-</a>
+  <strong>Files:</strong> <a id="mobile_files" href="#">loading...</a><a id="cf_mobile_files" class="cf" href="#" style="display:none">-</a>
 </div>
 <p class="time">Updated: <span id="time">-</span></p>
 </body>
