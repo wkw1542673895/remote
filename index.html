@@ -6,10 +6,9 @@
 <title>Remote Access</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-  body { font-family: -apple-system, sans-serif; color: #333; background: #f0f2f5; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  body { font-family: -apple-system, sans-serif; color: #333; background: #f0f2f5; min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
   .container { width: 100%; max-width: 600px; }
-  h2 { text-align: center; margin-bottom: 24px; font-size: 22px; }
+  h2 { text-align: center; margin-bottom: 24px; font-size: 22px; color: #222; }
   .section { background: #fff; border-radius: 14px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
   .label { font-size: 13px; color: #888; margin-bottom: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
   .item { margin-bottom: 12px; }
@@ -30,13 +29,13 @@ async function load() {
     const base = d.dashboard || '';
     const cf = d.cloudflare || '';
     set('dashboard', base);
-    set('dashboard2', base + '/dashboard2');
-    set('terminal', base + '/terminal/');
-    set('desktop', base + '/desktop');
-    set('files', base + '/files');
-    set('mobile_dashboard', base + '/dashboard/mobile');
-    set('mobile', base + '/mobile');
-    set('mobile_files', base + '/files');
+    set('dashboard2', d.dashboard2 || base + '/dashboard2');
+    set('terminal', d.terminal || base + '/terminal/');
+    set('desktop', d.desktop || base + '/desktop');
+    set('files', d.files || base + '/files');
+    set('mobile_dashboard', d.mobile_dashboard || base + '/dashboard/mobile');
+    set('mobile', d.mobile || base + '/mobile');
+    set('mobile_files', d.files || base + '/files');
     if (cf) {
       document.querySelectorAll('.cf').forEach(el => el.style.display = 'block');
       set('cf_dashboard', cf);
