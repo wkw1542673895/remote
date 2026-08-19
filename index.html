@@ -23,8 +23,18 @@
 <script>
 async function load() {
   try {
-    const r = await fetch('url.json?' + Date.now());
-    const d = await r.json();
+    const endpoints = [
+      'https://raw.githubusercontent.com/wkw1542673895/remote/main/url.json?cb=' + Date.now(),
+      'url.json?cb=' + Date.now()
+    ];
+    let d = null;
+    for (const endpoint of endpoints) {
+      try {
+        const r = await fetch(endpoint, { cache: 'no-store' });
+        if (r.ok) { d = await r.json(); break; }
+      } catch (_) {}
+    }
+    if (!d) throw new Error('url.json unavailable');
     const set = (id, url) => { const el = document.getElementById(id); if (el && url) { el.href = url; el.textContent = url; } };
     const base = d.dashboard || '';
     const cf = d.cloudflare || '';
