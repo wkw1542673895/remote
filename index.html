@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
 <title>Remote Access</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,46 +23,53 @@
   .time { color: #aaa; font-size: 12px; text-align: center; margin-top: 12px; }
 </style>
 <script>
+const FALLBACK_URLS = {"dashboard": "https://small-operated-lifetime-valves.trycloudflare.com", "terminal": "https://small-operated-lifetime-valves.trycloudflare.com/terminal/", "mobile": "https://small-operated-lifetime-valves.trycloudflare.com/mobile", "mobile_dashboard": "https://small-operated-lifetime-valves.trycloudflare.com/dashboard/mobile", "desktop": "https://small-operated-lifetime-valves.trycloudflare.com/desktop", "files": "https://small-operated-lifetime-valves.trycloudflare.com/files", "dashboard2": "https://small-operated-lifetime-valves.trycloudflare.com/dashboard2", "updated": "2026-08-24 09:24", "cloudflare": "https://small-operated-lifetime-valves.trycloudflare.com", "cf_terminal": "https://small-operated-lifetime-valves.trycloudflare.com/terminal", "cf_mobile": "https://small-operated-lifetime-valves.trycloudflare.com/mobile"};
 async function load() {
-  try {
-    const endpoints = [
-      'https://raw.githubusercontent.com/wkw1542673895/remote/main/url.json?cb=' + Date.now(),
-      'url.json?cb=' + Date.now()
-    ];
-    let d = null;
-    for (const endpoint of endpoints) {
-      try {
-        const r = await fetch(endpoint, { cache: 'no-store' });
-        if (r.ok) { d = await r.json(); break; }
-      } catch (_) {}
-    }
-    if (!d) throw new Error('url.json unavailable');
-    const set = (id, url) => { const el = document.getElementById(id); if (el && url) { el.href = url; el.textContent = url; } };
-    const base = d.dashboard || '';
-    const cf = d.cloudflare || '';
-    set('dashboard', base);
-    set('dashboard2', d.dashboard2 || base + '/dashboard2');
-    set('terminal', d.terminal || base + '/terminal/');
-    set('desktop', d.desktop || base + '/desktop');
-    set('files', d.files || base + '/files');
-    set('mobile_dashboard', d.mobile_dashboard || base + '/dashboard/mobile');
-    set('mobile', d.mobile || base + '/mobile');
-    set('mobile_files', d.files || base + '/files');
-    if (cf) {
-      document.querySelectorAll('.cf').forEach(el => el.style.display = 'block');
-      set('cf_dashboard', cf);
-      set('cf_dashboard2', cf + '/dashboard2');
-      set('cf_terminal', cf + '/terminal');
-      set('cf_desktop', cf + '/desktop');
-      set('cf_files', cf + '/files');
-      set('cf_mobile_dashboard', cf + '/dashboard/mobile');
-      set('cf_mobile', cf + '/mobile');
-      set('cf_mobile_files', cf + '/files');
-    }
-    document.getElementById('time').textContent = d.updated || '-';
-  } catch(e) {
-    document.getElementById('status').textContent = 'URL not available';
+  let d = FALLBACK_URLS;
+  const endpoints = [
+    'url.json?cb=' + Date.now(),
+    'https://api.github.com/repos/wkw1542673895/remote/contents/url.json'
+  ];
+  for (const endpoint of endpoints) {
+    try {
+      const r = await fetch(endpoint, { cache: 'no-store' });
+      if (!r.ok) continue;
+      let candidate = await r.json();
+      if (candidate.content) {
+        candidate = JSON.parse(atob(candidate.content.replace(/\n/g, '')));
+      }
+      if (!candidate.dashboard) {
+        continue;
+      }
+      if (!d.updated || !candidate.updated || candidate.updated >= d.updated) {
+        d = candidate;
+      }
+      break;
+    } catch (_) {}
   }
+  const set = (id, url) => { const el = document.getElementById(id); if (el && url) { el.href = url; el.textContent = url; } };
+  const base = d.dashboard || '';
+  const cf = d.cloudflare || '';
+  set('dashboard', base);
+  set('dashboard2', d.dashboard2 || base + '/dashboard2');
+  set('terminal', d.terminal || base + '/terminal/');
+  set('desktop', d.desktop || base + '/desktop');
+  set('files', d.files || base + '/files');
+  set('mobile_dashboard', d.mobile_dashboard || base + '/dashboard/mobile');
+  set('mobile', d.mobile || base + '/mobile');
+  set('mobile_files', d.files || base + '/files');
+  if (cf) {
+    document.querySelectorAll('.cf').forEach(el => el.style.display = 'block');
+    set('cf_dashboard', cf);
+    set('cf_dashboard2', cf + '/dashboard2');
+    set('cf_terminal', cf + '/terminal');
+    set('cf_desktop', cf + '/desktop');
+    set('cf_files', cf + '/files');
+    set('cf_mobile_dashboard', cf + '/dashboard/mobile');
+    set('cf_mobile', cf + '/mobile');
+    set('cf_mobile_files', cf + '/files');
+  }
+  document.getElementById('time').textContent = d.updated || '-';
 }
 window.onload = load;
 </script>
